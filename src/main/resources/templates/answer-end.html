@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<body>
+    <div th:fragment="answersEndFragment">
+        <h2>Опрос окончен!</h2>
+        <input type="hidden" id="cntQuestion" name="cntQVal" th:value="${cntQVal}"/>
+    </div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Анкета</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $.noConflict();
+        function ready(){
+            if ("[[${cntQU}]]" > 0) {
+                var isOk = confirm("Вы уже прошли опрос по этой анкете, результат опроса перезапишется. Продолжить?");
+
+                if (!isOk) {
+                    document.location.href = "/questionnaire/all";
+                } else {
+                    jQuery.ajax({
+                        url : '/deleteUserQuestionnaire/' + [[${questionnaire.id}]],
+                        type : 'GET',
+                        async : false,
+                        success: function() {
+                            alert('Данные предыдущего опроса удалены!!!');
+                        },
+                        error: function (){
+                            console.log("Error!");
+                        }
+                    });
+                }
+            }
+        }
+        document.addEventListener("DOMContentLoaded", ready);
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <style>
+        th {
+            text-align: center;
+            padding: 10px;
+        }
+        td {
+            padding: 10px;
+            word-wrap: break-word;
+
+        }
+        caption {
+            font-size: 25px;
+            caption-side: top;
+        }
+        .paddingTop {
+            padding-top: 25px;
+        }
+
+    </style>
+</head>
+<body>
+<header th:insert="blocks/header :: header"></header>
+
+<div class="container py-3">
+    <div>
+        <h4 th:text="${questionnaire.name}"></h4>
+        <p th:text="${questionnaire.description}"></p>
+    </div>
+    <form method="post" name="formQ" id="formId">
+        <div id="answers">
+            <h4 th:text="${question.text}"></h4>
+            <table class="table">
+                <caption>Выберите один или несколько вариантов ответа</caption>
+
+                <tr  th:each="answer : ${question.answers}">
+                    <td class="paddingTop">
+                        <p th:text="${answer.text}"></p>
+                    </td>
+                    <td>
+                        <input th:type="${question.isOneAnswer}? 'radio':'checkbox'" name="answerIdStr" th:value="${answer.id}" th:checked="${question.isOneAnswer}? 'checked'"><br>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" id="cntQuestion" th:value="${cntQVal}"/>
+        </div>
+        <table class="table" id="navigatorBtn">
+            <tr>
+                <td><button type="submit" id="saveAnswerBtn" class="btn btn-info">Ответить</button></td>
+                <td><button type="button" class="btn btn-info" disabled id="next" title="Следующий вопрос">Следующий вопрос</button></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div th:insert="blocks/footer :: footer"></div>
+
+<script type="text/javascript">
+
+    jQuery('#next').on('click', function() {
+        var cntQuestionVal = document.getElementById('cntQuestion').value;
+
+        document.getElementById('next').disabled = "disabled";
+        document.getElementById('saveAnswerBtn').disabled = "";
+
+        jQuery.ajax({
+            url: "/answer/next",
+            type: 'GET',
+            data: {cntQ: cntQuestionVal, questionnaireId: [[${questionnaire.id}]]},
+            beforeSend: function(){
+                jQuery('#answers').empty();
+            },
+            success: function(responce){
+                jQuery('#answers').append(responce);
+
+                if (jQuery(responce).find('#cntQuestion').val() === '-1') {
+                    document.getElementById("navigatorBtn").hidden = true;
+                }
+            },
+            error: function(){
+                alert('Error!');
+            }
+        })
+    });
+
+    function sendForm(e){
+        e.preventDefault();
+
+        var chks = document.getElementsByName('answerIdStr');
+        var chkRes = '';
+
+        chks.forEach(function(element) {
+            if (element.checked) {
+                chkRes = chkRes + ',' + element.value;
+            }
+            // else {
+            //     chkRes = chkRes + ',0';
+            // }
+        });
+
+        if (chkRes === '') {
+            alert('Выберите хотя бы один вариант ответа!');
+            return;
+        }
+
+        var data = JSON.stringify(chkRes.substring(1));
+
+        jQuery.ajax({
+            url: "/questionnaire/" + [[${questionnaire.id}]] + "/go",
+            type: 'POST',
+            data: {answersIdStr: data},
+            success: function(){
+                document.getElementById('next').disabled = "";
+                document.getElementById('saveAnswerBtn').disabled = "disabled";
+                // alert('ANSWER!!!');
+            },
+            error: function(){
+                alert('Error!');
+            }
+        })
+    }
+
+    var answerButton = document.getElementById('saveAnswerBtn');
+    answerButton.addEventListener("click", sendForm);
+</script>
+</body>
+
+
+</html>
