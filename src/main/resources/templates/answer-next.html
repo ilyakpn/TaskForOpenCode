@@ -14,18 +14,10 @@
                 </td>
                 <td>
                     <input th:type="${question1.isOneAnswer}? 'radio':'checkbox'" id="idChk" name="answerIdStr" th:value="${answer.id}" th:checked="${question1.isOneAnswer}? 'checked'"/><br>
-<!--                    <input type="hidden" id="hId" name="isOneAnswer"/>-->
                 </td>
             </tr>
         </table>
-<!--        <p th:text="${cntQVal}"></p>-->
         <input type="hidden" id="cntQuestion" name="cntQVal" th:value="${cntQVal}"/>
-<!--        <table class="table">-->
-<!--            <tr>-->
-<!--                <td><button type="submit" id="saveAnswerBtn" class="btn btn-info">Ответить</button></td>-->
-<!--                <td><button type="button" class="btn btn-info" disabled id="next" title="Следующий вопрос">Следующий вопрос</button></td>-->
-<!--            </tr>-->
-<!--        </table>-->
     </div>
 </body>
 </html>

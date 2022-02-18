@@ -62,9 +62,9 @@ public class QuestionnaireController {
         }
 
         Questionnaire questionnaire = getQuestionnaireById(id).get(0);
-        int countquestions = questionRepository.countQuestionsByQuestionnaire(questionnaire);
+        int countQuestions = questionRepository.countQuestionsByQuestionnaire(questionnaire);
 
-        if (countquestions == 0){
+        if (countQuestions == 0){
             return "redirect:/questionnaire/all";
         }
 
@@ -110,8 +110,6 @@ public class QuestionnaireController {
                 usersAnswersRepository.save(usersAnswers);
             }
         }
-
-//        System.out.println(answersIdStr);
     }
 
     @Transactional

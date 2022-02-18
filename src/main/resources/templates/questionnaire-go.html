@@ -126,9 +126,6 @@
             if (element.checked) {
                 chkRes = chkRes + ',' + element.value;
             }
-            // else {
-            //     chkRes = chkRes + ',0';
-            // }
         });
 
         if (chkRes === '') {
@@ -145,7 +142,6 @@
             success: function(){
                 document.getElementById('next').disabled = "";
                 document.getElementById('saveAnswerBtn').disabled = "disabled";
-                // alert('ANSWER!!!');
             },
             error: function(){
                 alert('Error!');
