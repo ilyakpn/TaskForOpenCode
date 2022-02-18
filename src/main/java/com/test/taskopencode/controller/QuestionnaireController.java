@@ -1,10 +1,7 @@
 package com.test.taskopencode.controller;
 
 import com.test.taskopencode.model.*;
-import com.test.taskopencode.repository.AnswerRepository;
-import com.test.taskopencode.repository.QuestionnaireRepository;
-import com.test.taskopencode.repository.UserRepository;
-import com.test.taskopencode.repository.UsersAnswersRepository;
+import com.test.taskopencode.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +17,9 @@ import java.util.Optional;
 
 @Controller
 public class QuestionnaireController {
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -61,16 +61,17 @@ public class QuestionnaireController {
             return "redirect:/questionnaire/all";
         }
 
+        Questionnaire questionnaire = getQuestionnaireById(id).get(0);
+        int countquestions = questionRepository.countQuestionsByQuestionnaire(questionnaire);
+
+        if (countquestions == 0){
+            return "redirect:/questionnaire/all";
+        }
+
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(userName).orElseThrow();
 
-        Questionnaire questionnaire = getQuestionnaireById(id).get(0);
-
         int cntQuestionnaireUser = usersAnswersRepository.countByQuestionnaireAndUser(questionnaire, user);
-
-        if (cntQuestionnaireUser == 0){
-            return "redirect:/questionnaire/all";
-        }
 
         model.addAttribute("cntQU", cntQuestionnaireUser);
         model.addAttribute("cntQVal", cntQVal);

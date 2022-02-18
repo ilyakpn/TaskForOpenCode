@@ -4,6 +4,8 @@ import com.test.taskopencode.model.Question;
 import com.test.taskopencode.model.Questionnaire;
 import org.springframework.data.repository.CrudRepository;
 
-public interface QuestionRepository extends CrudRepository<Question, Long> {
+import java.util.ArrayList;
 
+public interface QuestionRepository extends CrudRepository<Question, Long> {
+    int countQuestionsByQuestionnaire(Questionnaire questionnaire);
 }

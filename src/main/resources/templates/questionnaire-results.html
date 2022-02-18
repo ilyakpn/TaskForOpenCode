@@ -18,6 +18,9 @@
             font-size: 25px;
             caption-side: top;
         }
+        .textLeft {
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -28,6 +31,8 @@
         <h4 th:text="${questionnaire.name}"></h4>
         <p th:text="${questionnaire.description}"></p>
     </div>
+
+    <div class="textLeft"><a href="/questionnaire/all" type="button" class="btn btn-info" >Назад</a></div>
 
     <table class="table">
 

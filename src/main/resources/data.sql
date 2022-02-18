@@ -1,2 +1,2 @@
 -- password - 'admin'
---insert into users (email, password, role, status) values ('admin@mail.ru', '$2a$12$bL73OGR/aY.P8F92x2aLXeobrShtAaZJQvfPe0xzpwVz9WSHoS0ZK', 'ADMIN', 'ACTIVE')
+-- insert into users (email, password, role, status) values ('admin@mail.ru', '$2a$12$bL73OGR/aY.P8F92x2aLXeobrShtAaZJQvfPe0xzpwVz9WSHoS0ZK', 'ADMIN', 'ACTIVE')
