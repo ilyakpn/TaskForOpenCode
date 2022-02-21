@@ -4,6 +4,7 @@ import com.test.taskopencode.model.*;
 import com.test.taskopencode.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Controller
 public class QuestionnaireController {
@@ -35,9 +38,22 @@ public class QuestionnaireController {
 
     @GetMapping(value="/questionnaire/all")
     public String allQuestionnaires(Model model) {
+        Iterable<Questionnaire> questionnaires;
 
-        Iterable<Questionnaire> questionnaires = questionnaireRepository.findAll();
-        model.addAttribute("questionnaires", questionnaires);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().contains(new SimpleGrantedAuthority(Permission.DEVELOPERS_WRITE.getPermission()));
+
+        questionnaires = questionnaireRepository.findAll();
+
+        if (!isAdmin) {
+            List<Questionnaire> questionnairesPublish = StreamSupport.stream(questionnaires.spliterator(), false)
+                    .filter(Questionnaire::isPublish)
+                    .collect(Collectors.toList());
+
+            model.addAttribute("questionnaires", questionnairesPublish);
+        } else {
+            model.addAttribute("questionnaires", questionnaires);
+        }
 
         return "questionnaire-all";
     }
@@ -158,10 +174,11 @@ public class QuestionnaireController {
     }
 
     @PostMapping(value="/questionnaire/{id}/edit")
-    public String postEditQuestionnaire(@PathVariable(value="id") long id, @RequestParam String name, @RequestParam String description, Model model) {
+    public String postEditQuestionnaire(@PathVariable(value="id") long id, @RequestParam String name, @RequestParam String description, @RequestParam String isPublic, Model model) {
         Questionnaire questionnaire = questionnaireRepository.findById(id).orElseThrow();
         questionnaire.setName(name);
         questionnaire.setDescription(description);
+        questionnaire.setPublish(isPublic.equals("true"));
 
         questionnaireRepository.save(questionnaire);
 

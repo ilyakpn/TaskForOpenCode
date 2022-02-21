@@ -24,6 +24,9 @@ public class Questionnaire {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "publish")
+    private boolean publish;
+
     @OneToMany(mappedBy = "questionnaire", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
@@ -33,6 +36,6 @@ public class Questionnaire {
     public Questionnaire(String name, String description) {
         this.name = name;
         this.description = description;
+        this.publish = false;
     }
-
 }

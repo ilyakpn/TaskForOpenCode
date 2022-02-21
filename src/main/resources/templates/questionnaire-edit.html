@@ -42,12 +42,13 @@
     <div class="textLeft"><a href="/questionnaire/all" type="button" class="btn btn-info" >Выйти из редактора</a></div>
 
     <div th:each="el : ${questionnaire}">
-        <form method="post">
+        <form method="post" name="formQuestionnaire">
             <table class="table">
                 <caption>Анкета</caption>
                 <tr class="alert alert-info mt-2">
                     <th>Наименование</th>
                     <th>Описание</th>
+                    <th>Опубликовать</th>
                     <th>Сохранить</th>
                 </tr>
                 <tr>
@@ -58,7 +59,11 @@
                         <input type="text" name="description" th:value="${el.description}" class="form-control"><br>
                     </td>
                     <td class="tdCenter">
-                        <button type="submit" class="btn btn-info" title="Сохранить"><i class="fa fa-save"></i></button>
+                        <input type="checkbox" id="idChk" name="checkbox" th:checked="${el.publish}? 'checked'"><br>
+                        <input type="hidden" id="hId" name="isPublic"/>
+                    </td>
+                    <td class="tdCenter">
+                        <button type="submit" name="sendBtn" class="btn btn-info" title="Сохранить"><i class="fa fa-save"></i></button>
                     </td>
                 </tr>
             </table>
@@ -99,5 +104,21 @@
 </div>
 
 <div th:insert="blocks/footer :: footer"></div>
+
+<script>
+    function sendForm(){
+        var chk = document.getElementById('idChk');
+        if (chk.checked) {
+            document.getElementById('hId').value = "true";
+        } else {
+            document.getElementById('hId').value = "false";
+        }
+    }
+
+    var sendButton = document.formQuestionnaire.sendBtn;
+    sendButton.addEventListener("click", sendForm);
+
+</script>
+
 </body>
 </html>
