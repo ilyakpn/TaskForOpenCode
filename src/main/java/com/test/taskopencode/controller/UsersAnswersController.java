@@ -82,8 +82,6 @@ public class UsersAnswersController {
             }
         }
 
-
-//        model.addAttribute("user", user);
         model.addAttribute("questionnaire", questionnaire);
         model.addAttribute("userResult", userResult);
 
